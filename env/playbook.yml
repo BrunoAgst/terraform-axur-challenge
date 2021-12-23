@@ -1,0 +1,28 @@
+- hosts: terraform-ansible
+  tasks:
+  - name: Instalando curl
+    apt: 
+      pkg:
+       - curl
+      update_cache: yes
+    become: yes
+  - name: Baixando pacotes node
+    shell: "curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -"
+    become: yes
+  - name: Instalando node
+    shell: "sudo apt-get install -y nodejs"
+    become: yes
+  - name: Instalando pm2
+    shell: "npm install pm2 -g"
+    become: yes
+  - name: Git clone
+    ansible.builtin.git:
+      repo: https://github.com/BrunoAgst/axur-challenge
+      dest: /home/ubuntu/application
+      version: main
+      force: yes
+  - name: Instalando depedencias
+    shell: "cd /home/ubuntu/application/app; npm install"
+  - name: Iniciando aplicação
+    shell: 'API_KEY= PORT= pm2 start /home/ubuntu/application/app/src/index.js'
+  
